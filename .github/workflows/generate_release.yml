@@ -33,6 +33,7 @@ jobs:
         id: generate-release
         run: |
           python3 ./.github/workflows/changelog.py \
+            "${{ github.repository_owner }}" \
             "${{ steps.get-target.outputs.target }}" \
             ./output.env ./changelog.md --workdir . --handwritten "${{ github.event.inputs.handwritten }}"
           source ./output.env

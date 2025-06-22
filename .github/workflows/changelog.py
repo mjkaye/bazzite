@@ -6,8 +6,6 @@ from typing import Any
 import re
 from collections import defaultdict
 
-REGISTRY = "docker://ghcr.io/ublue-os/"
-
 IMAGE_MATRIX = {
     "base": ["desktop", "deck", "nvidia-closed", "nvidia-open"],
     "de": ["kde", "gnome"],
@@ -96,7 +94,8 @@ def get_images():
         yield img, base, de
 
 
-def get_manifests(target: str):
+def get_manifests(owner: str, target: str):
+    registry = f"docker://ghcr.io/{owner}/"
     out = {}
     imgs = list(get_images())
     for j, (img, _, _) in enumerate(imgs):
@@ -105,7 +104,7 @@ def get_manifests(target: str):
         for i in range(RETRIES):
             try:
                 output = subprocess.run(
-                    ["skopeo", "inspect", REGISTRY + img + ":" + target],
+                    ["skopeo", "inspect", registry + img + ":" + target],
                     check=True,
                     stdout=subprocess.PIPE,
                 ).stdout
@@ -385,6 +384,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("owner", help="Repository owner")
     parser.add_argument("target", help="Target tag")
     parser.add_argument("output", help="Output environment file")
     parser.add_argument("changelog", help="Output changelog file")
@@ -393,6 +393,7 @@ def main():
     parser.add_argument("--handwritten", help="Handwritten changelog")
     args = parser.parse_args()
 
+    owner = args.owner
     # Remove refs/tags, refs/heads, refs/remotes e.g.
     # Tags cannot include / anyway.
     target = args.target.split('/')[-1]
@@ -400,12 +401,12 @@ def main():
     if target == "main":
         target = "stable"
 
-    manifests = get_manifests(target)
+    manifests = get_manifests(owner, target)
     prev, curr = get_tags(target, manifests)
     print(f"Previous tag: {prev}")
     print(f" Current tag: {curr}")
 
-    prev_manifests = get_manifests(prev)
+    prev_manifests = get_manifests(owner, prev)
     title, changelog = generate_changelog(
         args.handwritten,
         target,
