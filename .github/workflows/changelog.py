@@ -406,7 +406,18 @@ def main():
     print(f"Previous tag: {prev}")
     print(f" Current tag: {curr}")
 
-    prev_manifests = get_manifests(owner, prev)
+    if curr is None:
+        print(f"Could not determine current tag for target {target}. Aborting release generation.")
+        with open(args.changelog, "w") as f:
+            f.write("Initial release for this branch. Changelog will be available on the next release.")
+        with open(args.output, "w") as f:
+            f.write(f'TITLE="Initial Release for {target}"\nTAG={target}-initial\n')
+        return
+
+    if prev:
+        prev_manifests = get_manifests(owner, prev)
+    else:
+        prev_manifests = {}
     title, changelog = generate_changelog(
         args.handwritten,
         target,
