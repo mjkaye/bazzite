@@ -20,6 +20,7 @@ on:
     branches:
       - testing
       - unstable
+      - iKarOS
     paths-ignore:
       - "**.md"
       - "**.txt"
@@ -246,6 +247,9 @@ jobs:
           elif [[ ${{ github.ref_name }} == "testing" ]]; then
             VERSION="testing-${UPSTREAM_TAG}"
             PRETTY_VERSION="Testing (F${UPSTREAM_TAG}, #${SHA_SHORT})"
+          elif [[ ${{ github.ref_name }} == "iKarOS" ]]; then
+            VERSION="iKarOS-${UPSTREAM_TAG}"
+            PRETTY_VERSION="iKarOS (F${UPSTREAM_TAG}, #${SHA_SHORT})"
           else
             VERSION="${UPSTREAM_TAG}"
             PRETTY_VERSION="Stable (F${UPSTREAM_TAG})"
@@ -402,6 +406,14 @@ jobs:
 
             if [ -n "$LATEST" ]; then
                 BUILD_TAGS+=("testing")
+            fi
+          elif [[ ${{ github.ref_name }} == "iKarOS" ]]; then
+            # Per fedora version
+            BUILD_TAGS+=("${FEDORA_VERSION}-iKarOS")
+            BUILD_TAGS+=("iKarOS-${FEDORA_VERSION}") # flip ver to be last
+
+            if [ -n "$LATEST" ]; then
+                BUILD_TAGS+=("iKarOS")
             fi
           else
             BUILD_TAGS+=("${FEDORA_VERSION}")

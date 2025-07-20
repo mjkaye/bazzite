@@ -152,9 +152,7 @@ def get_packages(manifests: dict[str, Any]):
     packages = {}
     for img, manifest in manifests.items():
         try:
-            packages[img] = json.loads(manifest["Labels"]["dev.hhd.rechunk.info"])[
-                "packages"
-            ]
+            packages[img] = json.loads(manifest["Labels"]["dev.hhd.rechunk.info"])[ "packages"]
         except Exception as e:
             print(f"Failed to get packages for {img}:\n{e}")
     return packages
@@ -400,6 +398,8 @@ def main():
 
     if target == "main":
         target = "stable"
+    elif target == "iKarOS":
+        target = "iKarOS"
 
     manifests = get_manifests(owner, target)
     prev, curr = get_tags(target, manifests)
@@ -439,3 +439,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

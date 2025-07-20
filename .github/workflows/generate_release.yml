@@ -26,6 +26,8 @@ jobs:
           TARGET="${TARGET##*/}"
           if [ "$TARGET" = "main" ]; then
             TARGET="stable"
+          elif [ "$TARGET" = "iKarOS" ]; then
+            TARGET="iKarOS"
           fi
           echo "target=$TARGET" >> $GITHUB_OUTPUT
       
