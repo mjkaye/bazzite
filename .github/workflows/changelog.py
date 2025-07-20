@@ -144,8 +144,11 @@ def get_tags(target: str, manifests: dict[str, Any]):
                 tags.remove(tag)
 
     tags = list(sorted(tags))
-    assert len(tags) > 2, "No current and previous tags found"
-    return tags[-2], tags[-1]
+    if len(tags) > 2:
+        return tags[-2], tags[-1]
+    elif len(tags) > 0:
+        return None, tags[-1]
+    return None, None
 
 
 def get_packages(manifests: dict[str, Any]):
