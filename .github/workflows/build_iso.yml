@@ -32,7 +32,7 @@ jobs:
           - bazzite-gnome-asus
           - bazzite-surface
           - bazzite-gnome-surface
-        major_version: [41]
+        major_version: [42]
     steps:
 
       - name: Free Disk Space (Ubuntu)
